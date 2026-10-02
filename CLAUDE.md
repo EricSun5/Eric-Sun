@@ -1,1 +1,1 @@
-Read and follow AGENTS.md before beginning work in this repository.
+Read AGENTS.md - it is the canonical file.
