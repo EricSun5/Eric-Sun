@@ -13,8 +13,8 @@ Bachelor's Degree
 
 ## Experience
 
-### Solutions Intern
-KMH LLP
+### Audit Intern (June 2026 - July 2026)
+KPMG LLP
 
 - Manage various work papers for clients, focusing on preparing and analyzing financial documents
 - Adhere to accounting regulations and commit to accuracy of reporting standards
@@ -23,7 +23,7 @@ KMH LLP
 ## Leadership
 
 ### Beta Alpha Psi
-Vice President
+Vice President (December 2025 - Present)
 
 - Assist in overseeing and planning activities of the chapter  
 - Promote the welfare of the chapter and the national honor society 
