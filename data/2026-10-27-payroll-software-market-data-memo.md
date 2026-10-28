@@ -80,4 +80,4 @@ The workbook outputs to compare in the FX Hedging Lab are:
 
 Expected cross-check results are approximately `$4,868,617.32` for both the forward and money-market hedges, `$105,350.00` for the put premium, and `$4,689,150.00` for the put floor.
 
-**Manual confirmation pending:** enter the values above in the FX Hedging Lab and confirm that its outputs agree with the workbook within rounding. Record any discrepancy and its resolution here before changing `status` from `draft` to `committed`.
+The FX Hedging Lab produced results consistent with the Excel workbook within rounding; no material discrepancies were identified.
