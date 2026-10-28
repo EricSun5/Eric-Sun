@@ -3,7 +3,7 @@ type: data
 engagement: fx-hedging
 capability: fx-hedging
 date: 2026-10-27
-status: draft
+status: committed
 ---
 
 # Payroll-Software FX Hedging — Market Data Memo
