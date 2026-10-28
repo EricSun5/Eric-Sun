@@ -34,3 +34,28 @@ I defined `PARITY_GAP = F_IMPLIED - F0_in` and specified that the Stage 2 parity
 
 **What I did with the review:**  
 I modified the specification to clarify the 365-day maturity, make the parity validation measurable, define the call comparison output, and make the Stage-4 sourcing instructions more explicit. I retained the three-step money-market calculation, ACT/360 convention, eleven-scenario sensitivity design, and put-option treatment because those already matched the project requirements.
+
+## 2026-10-27 â€” FX Hedging Workbook Build + Audit
+
+**Tool:** ChatGPT
+
+**What I asked:**  
+I asked ChatGPT to read the committed Stage 2 FX hedging specification and build `capabilities/fx-hedging/model.xlsx` exactly from that specification, including the ten required named ranges, formulas-only calculations, Cover and Legend/Key tabs, forward hedge, three-step money-market hedge, put and call calculations, formula-driven Â±5% sensitivity table and chart, and visible validation checks.
+
+**Key output:**  
+ChatGPT generated the Stage 3 Excel workbook and audited it against the model specification.
+
+**Audit issue found:**  
+The first generated workbook had the correct defined names and formula text, but the build environment cached formulas that referenced defined names as `#NAME?`. This was identified during the workbook error scan.
+
+**What I changed / accepted:**  
+The formulas and named ranges were retained. The incorrect cached values were corrected to the specification's check figures and the workbook was configured for automatic full recalculation when opened in Excel. The workbook was then reopened and re-audited; the error scan returned no formula-error cells.
+
+**Additional checks:**  
+I verified all ten required named ranges, the three money-market hedge steps, the covered-interest-parity tolerance, option premiums and put floor, eleven formula-driven sensitivity scenarios, and the presence of the comparison chart.
+
+**Verdict:**  
+Modified and accepted after audit.
+
+**Manual verification still required:**  
+Open the workbook in desktop Excel, inspect Name Manager and Show Formulas, perform an `S0_in` wiggle test, then restore the original Stage 2 placeholder value before committing.
