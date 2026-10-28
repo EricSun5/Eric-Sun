@@ -59,3 +59,25 @@ Modified and accepted after audit.
 
 **Manual verification still required:**  
 Open the workbook in desktop Excel, inspect Name Manager and Show Formulas, perform an `S0_in` wiggle test, then restore the original Stage 2 placeholder value before committing.
+
+2026-10-27 — Stage 4 FX Market Data Research and Population
+Tool: ChatGPT
+
+What I asked:
+I asked ChatGPT to research the Stage 4 EURUSD spot rate and matched 1-year USD and EUR rates, compute the forward by covered interest parity, populate the FX hedging workbook, document provenance, and identify any structural issues caused by replacing the Stage 2 placeholders.
+
+Sources used:  
+- ECB EUR/USD reference rate for 27 October 2026
+- U.S. Treasury 1-year Daily Par Yield Curve for 27 October 2026
+- Germany 1-year government bond yield for 27 October 2026
+Key output:
+The model was populated with S0_in = 1.1150, R_USD = 4.50%, R_FC = 2.930%, and CIP-implied F0_in = 1.1322366. Put and call strikes were reset to the live spot, while the scenario option premiums were retained.
+
+Issue found:
+The Stage 3 validation checks were tied to the placeholder check figures and would fail after legitimate live-data population.
+
+What I changed:
+I changed the validation checks so they test formula relationships and parity dynamically rather than comparing outputs to the old placeholder values.
+
+Verdict:
+Modified and accepted. Final FX Hedging Lab confirmation remains a manual browser check.
