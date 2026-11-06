@@ -32,7 +32,7 @@ The workbook will contain the following tabs in this order.
 
 | Tab | Purpose |
 |---|---|
-| `Cover` | Model title, scenario description, date, exposure summary, and navigation guidance |
+| `Cover` | Model title, scenario description, author, date, exposure summary, data-source/provenance block, and navigation guidance |
 | `Legend-Key` | Definitions of input colors, output colors, units, named ranges, and model conventions |
 | `Inputs` | All ten named inputs, units, placeholder/live-data status, source, and timestamp |
 | `Forward` | Forward hedge calculation and locked USD proceeds |
@@ -50,7 +50,7 @@ Input cells will be yellow, calculated output cells will be gray, and formula ce
 - The entire EUR receipt is assumed to be converted to USD.
 - `K_PUT` and `K_CALL` are initially set equal to `S0_in`, representing at-the-money strikes.
 - The forward and money-market hedge should be economically close when covered interest parity approximately holds.
-- Option premiums are treated as nominal USD hedge costs. For consistency with the course model, premiums are deducted from proceeds without financing or compounding the premium cost.
+- Option premiums are paid upfront at inception. Because hedge outcomes are compared at the 365-day settlement date, the premium cost is carried forward to settlement using `R_USD` under the model's simple-interest ACT/360 convention.
 - Transaction fees, bid-ask spreads, taxes, counterparty credit adjustments, collateral requirements, and margin requirements are excluded unless added in a later stage.
 - Stage 2 market values are placeholders. Market-dependent inputs will be replaced with sourced and timestamped values in Stage 4.
 - The EUR put is the protective option for this EUR receivable. The EUR call is retained as a comparison case and is not treated as the primary receivable hedge.
@@ -108,7 +108,8 @@ Using the Stage 2 placeholders, `F_IMPLIED` should be approximately `1.180700 US
 
 For each possible ending spot rate `S_T`, calculate:
 
-`PUT_NET_PROCEEDS = FC_AMT × MAX(S_T, K_PUT) − FC_AMT × PREM_PUT`
+`PUT_NET_PROCEEDS = FC_AMT × MAX(S_T, K_PUT) − [FC_AMT × PREM_PUT × (1 + R_USD × T_DAYS/360)]`
+The put premium is paid at inception. To compare the premium with settlement-date hedge proceeds, its USD cost is carried forward to settlement using `R_USD` and the ACT/360 convention.
 
 Calculate the total put premium separately as:
 
@@ -117,6 +118,7 @@ Calculate the total put premium separately as:
 Using the Stage 2 scenario premium:
 
 `PUT_PREM_TOTAL = 4,300,000 × 0.0245 = $105,350`
+Using the Stage 2 placeholder inputs, carrying the premium to settlement increases its comparable cost from $105,350.00 to approximately $109,889.56. The adjustment changes the option proceeds but does not change which strategy leads at any of the eleven sensitivity points: the forward remains ahead through the +4% EURUSD scenario, while the put remains slightly ahead at the +5% scenario.
 ### EUR Call Comparison
 
 Calculate total call premium as:
@@ -129,7 +131,7 @@ Using the scenario premium:
 
 For the reversed exposure of a EUR payable, calculate:
 
-`CALL_PROTECTED_COST = FC_AMT × MIN(S_T, K_CALL) + CALL_PREM_TOTAL`
+`CALL_PROTECTED_COST = FC_AMT × MIN(S_T, K_CALL) + [FC_AMT × PREM_CALL × (1 + R_USD × T_DAYS/360)]`
 The EUR call is a comparison case only. It is not the protective hedge for the current EUR receivable and therefore will not be included as a strategy in the receivable sensitivity chart.
 
 ## 6. Sensitivity Plan
@@ -193,6 +195,10 @@ The workbook must produce the following named summary outputs:
 | `CALL_PROTECTED_COST` | Protected USD cost for the reversed EUR-payable comparison case | USD |
 | `MM_FWD_GAP` | Difference between money-market and forward USD proceeds | USD |
 | `PARITY_STATUS` | PASS/FLAG result for the covered-interest-parity validation | Text |
+
+### Output Formula — Put Floor
+
+`PUT_FLOOR = FC_AMT × K_PUT − [FC_AMT × PREM_PUT × (1 + R_USD × T_DAYS/360)]`
 `PARITY_STATUS = PASS` when `ABS(PARITY_GAP) <= 0.00005`; otherwise `FLAG`.
 The `Sensitivity` tab must contain one Excel table named `tblSensitivity` with the columns:
 
