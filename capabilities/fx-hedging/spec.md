@@ -16,16 +16,16 @@ All values below are model inputs. Values identified as placeholders are indicat
 | Named Range | Description | Stage 2 Value | Unit | Stage 4 Source |
 |---|---|---:|---|---|
 | `FC_AMT` | Foreign-currency receivable | 4,300,000 | EUR | Scenario contractual amount; remains fixed |
-| `S0_in` | Spot EURUSD rate at inception | 1.1500 | USD/EUR | ECB EUR/USD reference rate; Stage-4 observation date recorded in market-data memo |
-| `F0_in` | 365-day EURUSD forward rate | 1.1807 | USD/EUR | EUR/USD one-year forward market quote; exact provider, observation time, bid/ask and selected rate documented in Stage-4 market-data memo |
-| `R_USD` | USD annual interest rate | 4.250% | Annual % | Federal Reserve H.15 1-year rate; observation date recorded in Stage 4 |
-| `R_FC` | EUR annual interest rate | 1.575% | Annual % | ECB 1-year euro-area benchmark rate; observation date recorded in Stage 4 |
-| `K_PUT` | EUR put strike | 1.1500 | USD/EUR | Derived in Stage 4: set equal to live `S0_in` under the assigned at-the-money scenario |
-| `K_CALL` | EUR call strike | 1.1500 | USD/EUR | Derived in Stage 4: set equal to live `S0_in` under the assigned at-the-money scenario |
+| `S0_in` | Spot EURUSD rate at inception | 1.1150 | USD/EUR | ECB EUR/USD reference rate, October 27, 2026 |
+| `F0_in` | 365-day EURUSD forward rate | 1.1807 | USD/EUR | Scenario bank forward quote; retain at 1.1807 unless the bank/instructor provides a requote |
+| `R_USD` | USD annual interest rate | 4.50% | Annual % | Federal Reserve H.15 — 1-year Treasury constant maturity, October 27, 2026 |
+| `R_FC` | EUR annual interest rate | 2.930% | Annual % | Germany 1-Year Government Bond Yield, October 27, 2026 |
+| `K_PUT` | EUR put strike | 1.1150 | USD/EUR | Derived in Stage 4: set equal to live `S0_in` under the assigned at-the-money scenario |
+| `K_CALL` | EUR call strike | 1.1150 | USD/EUR | Derived in Stage 4: set equal to live `S0_in` under the assigned at-the-money scenario |
 | `PREM_PUT` | Put premium per EUR | 0.0245 | USD/EUR | Live option quote or scenario input as required |
 | `PREM_CALL` | Call premium per EUR | 0.0448 | USD/EUR | Live option quote or scenario input as required |
 | `T_DAYS` | Days to settlement | 365 | Days | Contractual maturity; remains fixed |
-S0_in, R_USD, and R_FC are indicative Stage 2 placeholders rather than market observations. They are included so the model logic and check figures can be specified before Excel is built. All market-dependent placeholders will be replaced with sourced and timestamped data in Stage 4.
+`S0_in`, `R_USD`, and `R_FC` are sourced market observations from October 27, 2026. `S0_in = 1.1150`, `R_USD = 4.50%`, and `R_FC = 2.930%`. The option strikes are set equal to the sourced spot rate under the assigned at-the-money convention.
 ## 3. Tab Architecture
 
 The workbook will contain the following tabs in this order.
@@ -52,7 +52,7 @@ Input cells will be yellow, calculated output cells will be gray, and formula ce
 - The forward and money-market hedge should be economically close when covered interest parity approximately holds.
 - Option premiums are paid upfront at inception. Because hedge outcomes are compared at the 365-day settlement date, the premium cost is carried forward to settlement using `R_USD` under the model's simple-interest ACT/360 convention.
 - Transaction fees, bid-ask spreads, taxes, counterparty credit adjustments, collateral requirements, and margin requirements are excluded unless added in a later stage.
-- Stage 2 market values are placeholders. Market-dependent inputs will be replaced with sourced and timestamped values in Stage 4.
+- - `S0_in`, `R_USD`, and `R_FC` use sourced market observations dated October 27, 2026. `F0_in` remains the scenario bank forward quote of 1.1807 unless the bank/instructor provides a requote.
 - The EUR put is the protective option for this EUR receivable. The EUR call is retained as a comparison case and is not treated as the primary receivable hedge.
 ## 5. Calculation Flow
 
@@ -95,7 +95,15 @@ Also calculate the proceeds difference as:
 
 `MM_FWD_GAP = MM_PROCEEDS - FWD_PROCEEDS`
 
-Using the Stage 2 placeholders, `PARITY_GAP` should be approximately -0.00000048 USD/EUR and `MM_FWD_GAP` should be approximately -$2.05, both of which are within rounding.
+Using the sourced market inputs, `F_IMPLIED` is approximately `1.1322366 USD/EUR`. Therefore:
+
+`PARITY_GAP = 1.1322366 - 1.1807 = -0.0484634 USD/EUR`
+
+and:
+
+`MM_FWD_GAP = $4,868,617.32 - $5,077,010.00 = -$208,392.68`
+
+The large difference is retained because `F0_in = 1.1807` is the bank's quoted forward and must not be replaced by the CIP-implied forward.
 
 Calculate the implied forward rate as:
 
@@ -103,7 +111,7 @@ Calculate the implied forward rate as:
 
 Compare `F_IMPLIED` with `F0_in`.
 
-Using the Stage 2 placeholders, `F_IMPLIED` should be approximately `1.180700 USD/EUR`, which should closely match `F0_in = 1.1807`.
+Using the sourced market inputs, `F_IMPLIED` should be approximately `1.1322366 USD/EUR`. This does not closely match the bank's quoted `F0_in = 1.1807`; the difference is intentionally retained and reported by the parity check rather than replacing the bank quote.
 ### EUR Put Hedge
 
 For each possible ending spot rate `S_T`, calculate:
@@ -118,7 +126,7 @@ Calculate the total put premium separately as:
 Using the Stage 2 scenario premium:
 
 `PUT_PREM_TOTAL = 4,300,000 × 0.0245 = $105,350`
-Using the Stage 2 placeholder inputs, carrying the premium to settlement increases its comparable cost from $105,350.00 to approximately $109,889.56. The adjustment changes the option proceeds but does not change which strategy leads at any of the eleven sensitivity points: the forward remains ahead through the +4% EURUSD scenario, while the put remains slightly ahead at the +5% scenario.
+Using the sourced market inputs, carrying the put premium to settlement increases its comparable cost from $105,350.00 to approximately $110,156.59. The forward remains ahead of the put at all eleven sensitivity points from -5% through +5%.
 ### EUR Call Comparison
 
 Calculate total call premium as:
@@ -146,7 +154,7 @@ For every `S_T`, calculate:
 
 `MM_SENS_PROCEEDS = MM_PROCEEDS`
 
-`PUT_SENS_PROCEEDS = FC_AMT × MAX(S_T, K_PUT) − PUT_PREM_TOTAL`
+`PUT_SENS_PROCEEDS = FC_AMT × MAX(S_T, K_PUT) − [PUT_PREM_TOTAL × (1 + R_USD × T_DAYS/360)]`
 
 The table will show `S_T` and the USD proceeds for the unhedged, forward, money-market, and put strategies.
 
@@ -161,11 +169,11 @@ The completed workbook must pass all of the following checks:
 
 3. Using the Stage 2 placeholders, `FWD_PROCEEDS` must equal $5,077,010.
 
-4. The money-market hedge must show all three visible steps. With the Stage 2 placeholders, `MM_BORROW_FC` should be approximately €4,232,413.64, `MM_USD_NOW` approximately $4,867,275.69, and `MM_PROCEEDS` approximately $5,077,007.95.
+4. The money-market hedge must show all three visible steps. With the Stage 2 placeholders, `MM_BORROW_FC` should be approximately €4,175,945.42, `MM_USD_NOW` approximately $4,656,179.14, and `MM_PROCEEDS` approximately $4,868,617.32.
 
-5. `F_IMPLIED` should be approximately 1.180700. The parity check passes when `ABS(PARITY_GAP) <= 0.00005 USD/EUR`.
+5. `F_IMPLIED` should be approximately `1.1322366`. With the bank's quoted `F0_in = 1.1807`, `PARITY_GAP` should be approximately `-0.0484634 USD/EUR`. The parity diagnostic uses `ABS(PARITY_GAP) <= 0.00005 USD/EUR`; with these sourced inputs and the retained bank quote, the expected status is `FLAG`.
 
-6. Using the Stage 2 placeholders, `MM_PROCEEDS` and `FWD_PROCEEDS` should differ only because of input-display rounding. The expected difference is approximately $2.05.
+6. Using the sourced market inputs, `MM_PROCEEDS` should be approximately `$4,868,617.32` and `FWD_PROCEEDS` should equal `$5,077,010.00`. Therefore, `MM_FWD_GAP = MM_PROCEEDS - FWD_PROCEEDS` should be approximately `-$208,392.68`. This difference is expected because `F0_in` is the retained bank quote rather than the CIP-implied forward.
 
 7. `PUT_PREM_TOTAL` must equal $105,350 and `CALL_PREM_TOTAL` must equal $192,640 using the scenario premiums.
 
