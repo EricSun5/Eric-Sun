@@ -52,7 +52,7 @@ Input cells will be yellow, calculated output cells will be gray, and formula ce
 - The forward and money-market hedge should be economically close when covered interest parity approximately holds.
 - Option premiums are paid upfront at inception. Because hedge outcomes are compared at the 365-day settlement date, the premium cost is carried forward to settlement using `R_USD` under the model's simple-interest ACT/360 convention.
 - Transaction fees, bid-ask spreads, taxes, counterparty credit adjustments, collateral requirements, and margin requirements are excluded unless added in a later stage.
-- - `S0_in`, `R_USD`, and `R_FC` use sourced market observations dated October 27, 2026. `F0_in` remains the scenario bank forward quote of 1.1807 unless the bank/instructor provides a requote.
+- `S0_in`, `R_USD`, and `R_FC` use sourced market observations dated October 27, 2026. `F0_in` remains the scenario bank forward quote of 1.1807 unless the bank/instructor provides a requote.
 - The EUR put is the protective option for this EUR receivable. The EUR call is retained as a comparison case and is not treated as the primary receivable hedge.
 ## 5. Calculation Flow
 
@@ -167,9 +167,9 @@ The completed workbook must pass all of the following checks:
 
 2. No calculation formula contains hard-coded scenario inputs that should instead reference a named range.
 
-3. Using the Stage 2 placeholders, `FWD_PROCEEDS` must equal $5,077,010.
+3. `FWD_PROCEEDS` must equal $5,077,010.
 
-4. The money-market hedge must show all three visible steps. With the Stage 2 placeholders, `MM_BORROW_FC` should be approximately €4,175,945.42, `MM_USD_NOW` approximately $4,656,179.14, and `MM_PROCEEDS` approximately $4,868,617.32.
+4. The money-market hedge must show all three visible steps. `MM_BORROW_FC` should be approximately €4,175,945.42, `MM_USD_NOW` approximately $4,656,179.14, and `MM_PROCEEDS` approximately $4,868,617.32.
 
 5. `F_IMPLIED` should be approximately `1.1322366`. With the bank's quoted `F0_in = 1.1807`, `PARITY_GAP` should be approximately `-0.0484634 USD/EUR`. The parity diagnostic uses `ABS(PARITY_GAP) <= 0.00005 USD/EUR`; with these sourced inputs and the retained bank quote, the expected status is `FLAG`.
 
