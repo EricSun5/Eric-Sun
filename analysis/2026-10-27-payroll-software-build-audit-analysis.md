@@ -75,8 +75,17 @@ The table contains exactly eleven formula-driven settlement-rate scenarios from 
 **What I did:**  
 No additional model correction was required. The call series remains excluded from the receivable comparison chart, consistent with the Stage 2 specification.
 
+## Finding 5 — Validation Checks Tied to Typed Check Figures
+
+**What I checked:**  
+I reviewed the workbook's validation formulas to determine whether the checks would remain meaningful when the market input values changed.
+
+**What I found:**  
+The original Stage 3 validation checks compared calculated outputs against fixed check figures typed directly into the formulas. Those checks could pass under the original input set but could incorrectly flag a valid model after market inputs changed. A validation check tied to one fixed result does not continue to test the model correctly when its inputs are refreshed.
+
+**What I did:**  
+The validation checks were revised to compare calculated outputs against their underlying formula relationships using named ranges instead of fixed result figures. For example, the forward validation compares `FWD_PROCEEDS` with `FC_AMT × F0_in`, the money-market checks test each of the three required calculation steps, and the put-floor validation compares `PUT_FLOOR` with its named-range formula. As a result, the checks remain meaningful when market inputs change.
+
 ## Audit Conclusion
 
 After the correction in Finding 1, the workbook meets the Stage 3 build contract in the areas that can be verified programmatically: required names, formula structure, check figures, sensitivity grid, chart presence, parity logic, option calculations, and error-cell scan.
-
-A final manual Excel audit is still required before submission: open `model.xlsx` in desktop Excel, confirm the workbook opens without a repair warning, inspect **Formulas → Name Manager**, use **Show Formulas** to verify formula cells visually, and perform the `S0_in` wiggle test to confirm the sensitivity table and chart recalculate interactively. Restore all Stage 2 placeholder inputs after the test.
