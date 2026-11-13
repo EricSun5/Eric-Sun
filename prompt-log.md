@@ -35,7 +35,7 @@ I defined `PARITY_GAP = F_IMPLIED - F0_in` and specified that the Stage 2 parity
 **What I did with the review:**  
 I modified the specification to clarify the 365-day maturity, make the parity validation measurable, define the call comparison output, and make the Stage-4 sourcing instructions more explicit. I retained the three-step money-market calculation, ACT/360 convention, eleven-scenario sensitivity design, and put-option treatment because those already matched the project requirements.
 
-## 2026-10-27 â€” FX Hedging Workbook Build + Audit
+## 2026-10-27 — FX Hedging Workbook Build + Audit
 
 **Tool:** ChatGPT
 
@@ -82,7 +82,6 @@ I changed the validation checks so they test formula relationships and parity dy
 Verdict:
 Modified and accepted. Final FX Hedging Lab confirmation remains a manual browser check.
 
-2026-10-27 — Stage 4 FX Market Data Research and Population
 Tool: ChatGPT
 
 What I asked:
