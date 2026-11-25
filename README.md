@@ -17,8 +17,4 @@ Shidler College of Business
 - Technology
 - Financial Analysis
 
-## Engagements
-
-Portfolio engagements will be added here as they are completed.
-
 Drafted with help from ChatGPT (OpenAI, 2026); reviewed and edited by me.
