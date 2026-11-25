@@ -102,3 +102,19 @@ I changed the validation checks so they test formula relationships and parity dy
 
 Verdict:
 Modified and accepted. Final FX Hedging Lab confirmation remains a manual browser check.
+
+## 2026-11-25 — Stage 5 Independent Hedge Validation
+
+**Tool:** ChatGPT
+
+**What I asked:**  
+In a fresh conversation, I provided only `capabilities/fx-hedging/spec.md` and `data/2026-10-27-payroll-software-market-data-memo.md`. I asked the LLM to independently perform the complete hedge analysis, show supporting calculations, identify assumptions or ambiguities, and recommend a strategy.
+
+**What the AI produced:**  
+The fresh LLM independently calculated the forward, three-step money-market hedge, EUR put, EUR call comparison, unhedged sensitivity outcomes, covered-interest-parity diagnostic, break-even rates, and a CFO recommendation.
+
+**How I validated it:**  
+I compared the independent LLM results with the workbook at the -5%, 0%, and +5% settlement-rate scenarios for the forward, money-market, put, call-comparison, and unhedged cases. I also manually recomputed the forward proceeds, all three money-market steps, and the put outcome at `S_T = 1.1150` using named-range notation and calculator arithmetic.
+
+**Result:**  
+No material numerical discrepancies were identified between the independent LLM and the workbook at the tested points. The independent analysis also reproduced the expected parity `FLAG`, with the bank's quoted `F0_in = 1.1807` exceeding the CIP-implied forward of approximately `1.1322366` by `0.0484634 USD/EUR`, equivalent to approximately `$208,392.68` on the EUR 4.3 million receivable. The forward remained the recommended strategy, subject to confirmation that the bank quote is executable.
